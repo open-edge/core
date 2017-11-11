@@ -33,4 +33,25 @@ Master and workers are just regular open edge nodes: any node can be master and 
 
 A master is also counted as a worker as it can offloading computing tasks to itself. So if you have only one node, you can think it's a edge group with one 'hidden' worker.
 
+# Architecture design
+## Image
+### One big image vs. one small one for each function
+#### One big image for all functions
+*PROS*
+- No need to build/push/pull image all the time
+- Provide good abstraction: users don't need to care what's underlying: container or light vm
+*CONS*
+- Limited choices of supported environments
+- Need to be maintained by Open Edge contributors
+#### One small image for every function
+*PROS*
+- Image preparation is not Open Edge contributors' job anymore
+- Can support all environments.
+*CONS*
+- Image need to build/push/pull all the time
+- No abstraction. Users need to build docker image.
+#### Decision
+As a maintainer, one big image is prefered. However, when maintainers push new base image version, they need to make sure it's backward compatible. The base image consists of the Python (or Node, Java, etc.) image and various of dependencies. How to make sure new dependencies are backward compatible? We can't be sure, it's out of our hand. So we need a way allows users to specify dependencies. That means one big base image is not practical.
+
+We don't need to create a new image for every new function. We can check if there's an existing one that satisfies a function's dependency requirements. This work will be done in future iterations. In current iteration, a new image is created for every new function.
 
