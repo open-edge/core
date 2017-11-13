@@ -15,10 +15,14 @@ The programing model (how to write a lambda function and provide associated depe
 
 # Usage
 ## Function
-Open Edge's function's programming model is similar to AWS Lambda function's: a function takes a special context object as the first parameter, followed by other optional paramenters. Using the context object, users can interact with Open Edge.
+Open Edge's function's programming model is similar to AWS Lambda function's: 
 
-### How to write functions
-A task consists of a function handler and its configuration.
+```
+def my_hander(payload, context):
+        pass
+```
+**payload** is a Python dictionary contains the input data
+**context** is a special object which allows you to interact with Open Edge
 
 ### How to upload functions
 
@@ -54,4 +58,16 @@ A master is also counted as a worker as it can offloading computing tasks to its
 As a maintainer, one big image is prefered. However, when maintainers push new base image version, they need to make sure it's backward compatible. The base image consists of the Python (or Node, Java, etc.) image and various of dependencies. How to make sure new dependencies are backward compatible? We can't be sure, it's out of our hand. So we need a way allows users to specify dependencies. That means one big base image is not practical.
 
 We don't need to create a new image for every new function. We can check if there's an existing one that satisfies a function's dependency requirements. This work will be done in future iterations. In current iteration, a new image is created for every new function.
+
+## Function
+### What will happen when a new function is uploaded?
+First of all, the master node will find if there's an existing image that satisfies the function's dependency requirements. If no image is found, the node will build a new image and push it to the docker registry.
+
+In the current implementation:
+- No image is built and there's no way to specify function dependencies
+- Docker Hub is used as the registry. No other Docker registry is supported.
+
+These issues will be addressed in futures iterations.
+
+
 
